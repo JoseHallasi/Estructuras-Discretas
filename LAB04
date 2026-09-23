@@ -1,5 +1,106 @@
+
+
+----------------EJERCICIOS------------------
+from pyDatalog import pyDatalog
+pyDatalog.create_terms('Vehiculo, Color, rapido, lento, color, oscuro, Coche, Moto, Bicicleta')
+
+# Hechos
++rapido('Coche')
++rapido('Moto')
++lento('Bicicleta')
+
++color('Coche', 'rojo')
++color('Moto', 'negro')
++color('Bicicleta', 'azul')
+
+# Reglas
+oscuro(Vehiculo) <= color(Vehiculo, 'negro')
+oscuro(Vehiculo) <= color(Vehiculo, 'azul')
+
+# Consulta 1: rápido y oscuro
+print(rapido(Vehiculo) & oscuro(Vehiculo))
+
+# Consulta 2: lento y oscuro
+print(lento(Vehiculo) & oscuro(Vehiculo))
+-----------------------------------------------------------------------------------------------------
 from pyDatalog import pyDatalog
 
-pyDatalog.create_terms('X,Y')
+pyDatalog.create_terms('X, Y, Z, hombre, mujer, hijo, padre, madre, hermano, nieto, tio, sobrino, progenitor')
 
-print(X == 5)
+#  Hechos: género
++hombre('Fergus')
++hombre('Scrooge')
++hombre('Ludwig')
++hombre('Quackmore')
++hombre('Donald')
++hombre('Huey')
++hombre('Dewey')
++hombre('Louie')
+
++mujer('Downy')
++mujer('Matilda')
++mujer('Hortense')
++mujer('Daisy')
++mujer('Della')
++mujer('Webby')
++mujer('May')
++mujer('June')
+
+# Hechos: hijo(X, Y) -> X es hijo/a de Y
++hijo('Scrooge', 'Fergus')
++hijo('Scrooge', 'Downy')
++hijo('Matilda', 'Fergus')
++hijo('Matilda', 'Downy')
++hijo('Hortense', 'Fergus')
++hijo('Hortense', 'Downy')
+
++hijo('Donald', 'Hortense')
++hijo('Donald', 'Quackmore')
++hijo('Della', 'Hortense')
++hijo('Della', 'Quackmore')
+
++hijo('Webby', 'Donald')
++hijo('Webby', 'Daisy')
++hijo('May', 'Donald')
++hijo('May', 'Daisy')
++hijo('June', 'Donald')
++hijo('June', 'Daisy')
+
++hijo('Huey', 'Della')
++hijo('Dewey', 'Della')
++hijo('Louie', 'Della')
+
+# Reglas
+padre(X, Y)     <= hijo(Y, X) & hombre(X)
+madre(X, Y)     <= hijo(Y, X) & mujer(X)
+hermano(X, Y)   <= hijo(X, Z) & hijo(Y, Z) & (X != Y)
+nieto(X, Y)     <= hijo(X, Z) & hijo(Z, Y)
+tio(X, Y)       <= hermano(X, Z) & hijo(Y, Z) & hombre(X)
+sobrino(X, Y)   <= tio(Y, X) & hombre(X)
+
+progenitor(X, Y) <= padre(X, Y)
+progenitor(X, Y) <= madre(X, Y)
+
+# Consultas
+
+# a) ¿De quién es madre 'Hortense'?
+print("a)", madre('Hortense', X))
+
+# b) ¿Quiénes son los sobrinos de 'Scrooge'? ¿Y quiénes son las sobrinas?
+print("b) Sobrinos:", tio('Scrooge', X) & hombre(X))
+print("b) Sobrinas:", tio('Scrooge', X) & mujer(X))
+
+# c) ¿Quiénes son los padres de 'Gastón'?
+print("c)", progenitor(X, 'Gaston'))
+
+# d) ¿Quiénes son los abuelos de 'Hugo'? (Huey)
+print("d)", nieto('Huey', X))
+
+# e) ¿Quiénes son los abuelos maternos de 'Hugo'? (Huey)
+madre_huey = madre(Z, 'Huey')
+if madre_huey:
+    m = madre_huey[0][0]
+    print("e)", progenitor(X, m))
+else:
+    print("e) no se encontró madre de Huey")
+
