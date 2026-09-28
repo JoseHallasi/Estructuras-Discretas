@@ -1,4 +1,267 @@
+Actividades
 
+# Ejercicio 1
+# Declaramos las variables X e Y (deben empezar con mayúscula)
+pyDatalog.create_terms('X,Y')
+
+# Ejercicio 2
+# a) Pregunta si X es igual a 1
+print(X == 1)
+
+# b) Consulta con dos criterios combinados con '&'
+print((X == True) & (Y == False))
+
+# Ejercicio 3
+# Consulta con una contradicción: X no puede ser True y False al mismo tiempo
+# El resultado es un conjunto vacío, ya que no existe ningún valor de X que satisfaga ambas condiciones
+print((X == True) & (X == False))
+
+# Ejercicio 4
+# Las variables también pueden representar cadenas de texto.
+# Pide un nombre por teclado y arma un saludo con la primera letra de ese nombre
+print((X == input('Please enter your name : ')) & (Y == 'Hello ' + X[0]))
+
+# Ejercicio 5
+# Consulta con Y == 1 y a la vez Y == X + 1.
+# Como X nunca fue definida pyDatalog no puede calcular X + 1, por lo que la solución es vacía.
+print((Y == 1) & (Y == X + 1))
+
+
+# Ejercicio 6
+# Aquí X sí está vinculada (X == 1), por lo que Y == X + 1 se puede evaluar.
+# Como también se pide Y == 1, y X + 1 = 2, las condiciones son incompatibles entonces el resultado es un conjunto vacío.
+# Si probamos con X == 0 sí habría solución.
+print((X == 1) & (Y == 1) & (Y == X + 1))
+
+
+
+# Ejercicio 7
+# X toma el valor (1,2,3) y Y toma el tercer elemento de X (índice 2)
+print((X == (1, 2) + (3,)) & (Y == X[2]))
+
+# Ejercicio 8
+# Se pueden usar funciones de Python dentro de las expresiones siempre que se creen como términos lógicos con create_terms.
+def twice(a):
+    return a + a
+ 
+pyDatalog.create_terms('twice')
+print((X == 1) & (Y == twice(X)))
+
+
+# Ejercicio 9
+# Se pueden usar funciones de librerías estándar, como math.sqrt, dentro de las consultas.
+pyDatalog.create_terms('math')
+print((X == 2) & (Y == math.sqrt(X)))
+# Ejemplo de código
+# (suma recursiva de los dígitos de un número)
+def suma_digito(n):
+    if n < 10:
+        return n
+    else:
+        return n % 10 + suma_digito(n // 10)
+ 
+print(suma_digito(123))
+
+# Ejercicio 10
+pyDatalog.create_terms('X,Y,Z')
+print(X.in_((0,1,2,3,4)))
+
+
+# Ejercicio 11
+# a) El resultado es un conjunto de posibles soluciones, en orden aleatorio.
+# El atributo .data permite acceder a ese resultado como una lista de tuplas.
+print(X.in_(range(5)).data)
+print(X.in_(range(5)) == set([(0,), (1,), (2,), (3,), (4,)]))
+
+
+# b) Después de una consulta, la variable guarda todos sus valores posibles .data devuelve la lista completa, .v() devuelve el primer valor, 
+# y '>=' extrae el primer valor de la consulta hacia la variable.
+print("Data : ", X.data)
+print("First value : ", X.v())
+print("Extraction of first value of X: ", X.in_(range(5)) >= X)
+
+
+# c) El resultado de una consulta se puede filtrar usando '&'.
+# Aquí se queda solo con los valores de X menores a 2.
+print(X.in_(range(5)) & (X < 2))
+
+# Ejercicio 12
+# Los bucles se pueden anidar fácilmente combinando varios in_().
+# Esta consulta devuelve todas las combinaciones de X e Y entre 0 y 4,
+# donde Z es la suma de ambas y además Z es menor a 3.
+
+print(X.in_(range(5)) & Y.in_(range(5)) & (Z == X + Y) & (Z < 3))
+
+from pyDatalog import pyDatalog
+
+pyDatalog.create_terms('X,Y,Z,salary,tax_rate,tax_rate_for_salary_above,net_salary')
+
+salary['foo'] = 60
+salary['bar'] = 110
+
+tax_rate[X] = 0.25
+tax_rate_for_salary_above[X] = 0.30
+
+net_salary[X] = salary[X] * (1 - tax_rate[X])
+
+print(salary[X] == Y)
+print(net_salary[X] == Y)    
+
+!pip install pyDatalog
+
+from pyDatalog import pyDatalog
+pyDatalog.create_terms('X,Y,Z, salario, tasa_impuesto, tasa_impuesto_segun_salario, salario_neto')
+salario['foo'] = 60
+salario['bar'] = 110
+ 
+salario['foo'] = 70
+print(salario['foo'] == Y)
+ 
+_salario = dict()
+_salario['foo'] = 60
+_salario['bar'] = 110
+_salario['foo'] = 70
+print('foo --> ' + str(_salario['foo']))
+
+from pyDatalog import pyDatalog
+pyDatalog.create_terms('X,Y,Z, salario, tasa_impuesto, tasa_impuesto_segun_salario, salario_neto')
+salario['foo'] = 70
+salario['bar'] = 110
+ 
+print(salario[X] == 110)
+
+#
+16
+_salario = {'foo': 70, 'bar': 110}
+for i, j in _salario.items():
+    if j == 110:
+        print(i, '-->', j)
+
+from pyDatalog import pyDatalog
+pyDatalog.create_terms('X,Y,Z, salario, tasa_impuesto, tasa_impuesto_segun_salario, salario_neto')
+salario['foo'] = 70
+salario['bar'] = 110
+ 
+print((salario[X] == Y) & ~(Y == 110))
+
+#17
+from pyDatalog import pyDatalog
+pyDatalog.create_terms('X,Y,Z, salario, tasa_impuesto, tasa_impuesto_segun_salario, salario_neto')
+salario['foo'] = 70
+salario['bar'] = 110
+ 
++(tasa_impuesto[None] == 0.33)
+ 
+print(Z == salario[X] * (1 - tasa_impuesto[None]))
+
+18
+from pyDatalog import pyDatalog
+pyDatalog.create_terms('X,Y,Z, salario, tasa_impuesto, tasa_impuesto_segun_salario, salario_neto')
+salario['foo'] = 70
+salario['bar'] = 110
++(tasa_impuesto[None] == 0.33)
+ 
+salario_neto[X] = salario[X] * (1 - tasa_impuesto[None])
+ 
+print(salario_neto[X] == Y)
+ 
+_salario = {'foo': 70, 'bar': 110}
+for i, j in _salario.items():
+    k = j * (1 - 0.33)
+    print(i, k)
+
+
+from pyDatalog import pyDatalog
+pyDatalog.create_terms('X,Y,Z, salario, tasa_impuesto, tasa_impuesto_segun_salario, salario_neto')
+salario['foo'] = 70
+salario['bar'] = 110
++(tasa_impuesto[None] == 0.33)
+salario_neto[X] = salario[X] * (1 - tasa_impuesto[None])
+ 
+print(salario_neto['foo'] == Y)
+ 
+print(salario_neto[Y] < 50)
+
+
+  Python — Código Fuente
+from pyDatalog import pyDatalog
+pyDatalog.create_terms('X,Y,Z, salario, tasa_impuesto, tasa_impuesto_segun_salario, salario_neto')
+ 
+(tasa_impuesto_segun_salario[X] == 0.33) <= (0 <= X)
+(tasa_impuesto_segun_salario[X] == 0.50) <= (100 <= X)
+ 
+print(tasa_impuesto_segun_salario[120] == Y)
+print(tasa_impuesto_segun_salario[70] == Y)
+
+
+from pyDatalog import pyDatalog
+pyDatalog.create_terms('X,Y,Z, salario, tasa_impuesto_segun_salario, salario_neto_progresivo')
+salario['foo'] = 70
+salario['bar'] = 110
+
+(tasa_impuesto_segun_salario[X] == 0.33) <= (0 <= X)
+(tasa_impuesto_segun_salario[X] == 0.50) <= (100 <= X)
+
+salario_neto_progresivo[X] = salario[X] * (1 - tasa_impuesto_segun_salario[salario[X]])
+
+print(salario_neto_progresivo[X] == Y)
+
+from pyDatalog import pyDatalog
+pyDatalog.create_terms('factorial, N')
+ 
+factorial[N] = N * factorial[N - 1]
+factorial[1] = 1
+ 
+print(factorial[6] == N)
+
+
+from pyDatalog import pyDatalog
+pyDatalog.create_terms('X,Y,Z,jefe, cantidad_subordinados_directos')
+ 
++(jefe['Mary'] == 'John')
++(jefe['Sam'] == 'Mary')
++(jefe['Tom'] == 'Mary')
+ 
+(cantidad_subordinados_directos[X] == len_(Y)) <= (jefe[Y] == X)
+ 
+print(cantidad_subordinados_directos['Mary'] == Z)
+
+
+from pyDatalog import pyDatalog
+pyDatalog.create_terms('X,Y,Z, trabaja_en, tamano_departamento, jefe, jefe_indirecto, cantidad_subordinados_indirectos')
+ 
++ trabaja_en('Mary', 'Produccion')
++ trabaja_en('Sam', 'Marketing')
++ trabaja_en('John', 'Produccion')
++ trabaja_en('John', 'Marketing')
+ 
+_trabaja_en = set()
+_trabaja_en.add(('Mary', 'Produccion'))
+_trabaja_en.add(('Sam', 'Marketing'))
+_trabaja_en.add(('John', 'Produccion'))
+_trabaja_en.add(('John', 'Marketing'))
+ 
+print(trabaja_en(X, 'Marketing'))
+ 
+for i in _trabaja_en:
+    if i[1] == 'Marketing':
+        print(i[0])
+
+
+from pyDatalog import pyDatalog
+pyDatalog.create_terms('X,Y,Z, jefe, jefe_indirecto')
+ 
++(jefe['Mary'] == 'John')
++(jefe['Sam'] == 'Mary')
++(jefe['Tom'] == 'Mary')
+ 
+jefe_indirecto(X, Y) <= (jefe[X] == Y)
+ 
+jefe_indirecto(X, Y) <= (jefe[X] == Z) & jefe_indirecto(Z, Y)
+ 
+print(jefe_indirecto('Sam', X))
+ 
+jefe['John'] = 'Mary'
 
 ----------------EJERCICIOS------------------
 from pyDatalog import pyDatalog
